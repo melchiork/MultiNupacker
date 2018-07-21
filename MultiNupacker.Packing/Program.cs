@@ -1,6 +1,7 @@
 using System;
 using CommandLine;
 using MultiNupacker.Packing.App;
+using TinyIoC;
 
 namespace MultiNupacker.Packing
 {
@@ -9,15 +10,29 @@ namespace MultiNupacker.Packing
         private static void Main(string[] args)
         {
             Parser.Default.ParseArguments<CommandLineOptions>(args)
-                .WithParsed(opt => PackAllAssembliesInDirectory(opt.AssembliesDirectory, opt.Filter))
+                .WithParsed(PackAllAssembliesInDirectory)
                 .WithNotParsed(Console.WriteLine);
         }
 
-        private static void PackAllAssembliesInDirectory(string directory, string filter)
+        private static void PackAllAssembliesInDirectory(CommandLineOptions commandLineOptions)
         {
-            var multiAssemblyDirectoryPacker = new MultiAssemblyDirectoryPacker(directory, filter, Console.WriteLine);
+            var kernel = CreateKernel(commandLineOptions);
+
+            var multiAssemblyDirectoryPacker = kernel.Resolve<MultiAssemblyDirectoryPacker>();
 
             multiAssemblyDirectoryPacker.PackAllAssembliesInDirectory();
+        }
+
+        private static TinyIoCContainer CreateKernel(CommandLineOptions commandLineOptions)
+        {
+            var kernel = TinyIoCContainer.Current;
+            kernel.Register<Action<string>>(Console.WriteLine);
+            kernel.Register(commandLineOptions);
+            kernel.Register<FileToPackSelector>();
+            kernel.Register<PackerFactory>();
+            kernel.Register<MultiAssemblyDirectoryPacker>();
+
+            return kernel;
         }
     }
 }

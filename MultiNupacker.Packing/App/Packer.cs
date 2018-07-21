@@ -6,13 +6,15 @@ using NuGet.Versioning;
 
 namespace MultiNupacker.Packing.App
 {
-    public class Packer
+    internal class Packer
     {
         private readonly AssemblyFiles _assemblyFiles;
+        private readonly FilesystemAbstraction _filesystemAbstraction;
 
-        public Packer(AssemblyFiles assemblyFiles)
+        public Packer(AssemblyFiles assemblyFiles, FilesystemAbstraction filesystemAbstraction)
         {
             _assemblyFiles = assemblyFiles;
+            _filesystemAbstraction = filesystemAbstraction;
         }
 
         internal PackingResult Pack()
@@ -40,11 +42,9 @@ namespace MultiNupacker.Packing.App
 
             builder.Populate(assemblyInfo.ManifestMetadata);
 
-            var currentDirectoryPath = AppDomain.CurrentDomain.BaseDirectory;
-
             var nuspecFileName = $"{assemblyInfo.NameAndVersion}.nupkg";
 
-            using (var stream = new FileStream(Path.Combine(currentDirectoryPath, nuspecFileName), FileMode.Create))
+            using (var stream = _filesystemAbstraction.OpenStreamToOutputLocation(nuspecFileName))
             {
                 builder.Save(stream);
             }

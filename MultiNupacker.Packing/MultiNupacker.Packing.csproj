@@ -103,8 +103,11 @@
   <ItemGroup>
     <Compile Include="App\AssemblyFiles.cs" />
     <Compile Include="App\AssemblyInfo.cs" />
+    <Compile Include="App\FilesystemAbstraction.cs" />
+    <Compile Include="App\FileToPackSelector.cs" />
     <Compile Include="App\MultiAssemblyDirectoryPacker.cs" />
     <Compile Include="App\Packer.cs" />
+    <Compile Include="App\PackerFactory.cs" />
     <Compile Include="CommandLineOptions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Program.cs" />
@@ -112,6 +115,7 @@
     <Compile Include="Results\FailedPackingResult.cs" />
     <Compile Include="Results\PackingResult.cs" />
     <Compile Include="Results\SuccessfulPackingResult.cs" />
+    <Compile Include="TinyIoC\TinyIoC.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
